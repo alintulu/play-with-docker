@@ -293,11 +293,17 @@ func (d *docker) ContainerCreate(opts CreateContainerOpts) (err error) {
 		env = append(env, "DOCKER_TLSENABLE=false")
 	}
 
+	// Bind cvmfs
+	binds := []string{
+		"/mnt/cvmfs_mounts:/cvmfs:ro",
+	}
+
 	h := &container.HostConfig{
 		NetworkMode: container.NetworkMode(opts.SessionId),
 		Privileged:  opts.Privileged,
 		AutoRemove:  true,
 		LogConfig:   container.LogConfig{Config: map[string]string{"max-size": "10m", "max-file": "1"}},
+		Binds:       binds,
 	}
 
 	if os.Getenv("APPARMOR_PROFILE") != "" {
